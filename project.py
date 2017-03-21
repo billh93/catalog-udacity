@@ -322,8 +322,8 @@ def categoryJSON():
 @app.route('/')
 @app.route('/category')
 def showCategories():
-    category = session.query(Category).order_by(asc(Category.name))
-    return render_template('home.html', category=category)
+    categories = session.query(Category).order_by(asc(Category.name))
+    return render_template('home.html', categories=categories)
 
 
 # Create a new category
@@ -353,10 +353,11 @@ def editCategory(category_id):
             if request.form['name']:
                 editedCategory.name = request.form['name']
                 flash('Category Successfully Edited %s' % editedCategory.name)
-                return redirect(url_for('showCategory'))
+                return redirect(url_for('showCategories'))
         else:
             return render_template('editCategory.html',
-                                   category_id=category_id)
+                                   category_id=category_id,
+                                   category=editedCategory)
     else:
         return redirect(url_for('showCategories'))
 
@@ -387,9 +388,7 @@ def showItems(category_id):
     category = session.query(Category).filter_by(id=category_id).one()
     items = session.query(CategoryItem).filter_by(
         category_id=category_id).all()
-    creator = getUserInfo(category.user_id)
-    return render_template('items.html', items=items, category=category,
-                           creator=creator)
+    return render_template('items.html', items=items, category=category)
 
 
 # New Catalog Item

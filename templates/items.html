@@ -1,4 +1,54 @@
 {% extends "base.html" %}
 {% block content %}
-    <h1>Showing Items</h1>
+    <h1>Showing Games</h1>
+
+    <div class = 'flash'>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+
+            <ul>
+            {% for message in messages %}
+                <li> <strong> {{ message }} </strong> </li>
+            {% endfor %}
+            </ul>
+            {% endif %}
+        {% endwith %}
+    </div>
+	<div class="row padding-top padding-bottom">
+		<div class="col-md-1"></div>
+		<div class="col-md-11 padding-none">
+			<a href="{{url_for('editCategory', category_id = category.id )}}">
+				<button class="btn btn-default" id="new-menu-item">
+					<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>Edit Category
+				</button>
+			</a>
+			<a href="{{url_for('newItem', category_id = category.id )}}">
+				<button class="btn btn-default" id="new-menu-item">
+					<span class="glyphicon glyphicon-glass" aria-hidden="true"></span>Add Item
+				</button>
+			</a>
+						<a href="{{url_for('deleteCategory', category_id = category.id )}}">
+				<button class="btn btn-default delete" id="delete-restaurant">
+					<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>Delete Category
+				</button>
+			</a>
+		</div>
+		<div class="col-md-7"></div>
+	</div>
+
+	{% if items !=[] %}
+		<div class="row">
+			<div class="col-md-3">
+				{% for i in items %}
+					<div class="menu-item">
+						<!-- <img src="{{i.picture}}" alt=""> -->
+						<h3>{{i.name}}</h3>
+						<p>{{i.description}}</p>
+						<a href='{{url_for('editItem', category_id = category.id, item_id=i.id ) }}'>Edit</a> |
+						<a href='{{url_for('deleteItem', category_id = category.id, item_id=i.id ) }}'>Delete</a>
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+	{% endif %}
 {% endblock %}
