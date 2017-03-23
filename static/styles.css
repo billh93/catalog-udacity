@@ -1,6 +1,6 @@
 .login-wrap{
-    width:320px;
-    margin: 0 auto;
+    width: 80%;
+    margin: 5% auto 0 auto;
     border:1px solid #eee;
     padding:15px;
     background: #f8f8f8;
@@ -8,9 +8,20 @@
     color: black;
 }
 
-.fb_button{
+#fb_button{
     margin: 0 auto;
     display: block;
 }
 
 .form-group.last { margin-bottom:0px; }
+
+@media screen and (max-width: 767px) {
+
+}
+
+@media screen and (min-width: 768px) {
+    .login-wrap {
+        margin-top: 2%;
+        width: 50%;
+    }
+}

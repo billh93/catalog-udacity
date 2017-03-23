@@ -16,7 +16,7 @@ from flask import make_response
 import requests
 
 app = Flask(__name__)
-app.SEND_FILE_MAX_AGE_DEFAULT = 0
+# app.SEND_FILE_MAX_AGE_DEFAULT = 0
 
 CLIENT_ID = json.loads(open('client_secrets.json', 'r').read())['web'][
     'client_id']
@@ -29,10 +29,12 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
+"""
 @app.after_request
 def add_header(response):
     response.cache_control.max_age = 0
     return response
+"""
 
 
 @app.route('/login')
@@ -285,7 +287,8 @@ def disconnect():
     if 'provider' in login_session:
         if login_session['provider'] == 'google':
             gdisconnect()
-            del login_session['gplus_id']
+            if login_session['gplus_id']:
+                del login_session['gplus_id']
         if login_session['provider'] == 'facebook':
             fbdisconnect()
             del login_session['facebook_id']
