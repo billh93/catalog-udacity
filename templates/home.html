@@ -27,19 +27,6 @@
             {% endif %}
         {% endwith %}
     </div>
-	{% if user %}
-    <div class="row padding-top padding-bottom">
-		<div class="col-md-1"></div>
-		<div class="col-md-10 padding-none">
-			<a href="{{url_for('newCategory')}}">
-				<button class="btn btn-default" id="new-restaurant">
-                    Add a new Category
-				</button>
-			</a>
-		</div>
-		<div class="col-md-1"></div>
-	</div>
-	{% endif %}
 	{% for category in categories %}
 		<a href = "{{url_for('showItems', category_id = category.id)}}">
 			<div class="row">
