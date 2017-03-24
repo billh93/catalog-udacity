@@ -13,6 +13,11 @@
     display: block;
 }
 
+.modal{
+    display: block !important;
+    position: relative;
+}
+
 .form-group.last { margin-bottom:0px; }
 
 @media screen and (max-width: 767px) {

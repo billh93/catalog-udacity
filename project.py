@@ -16,7 +16,6 @@ from flask import make_response
 import requests
 
 app = Flask(__name__)
-# app.SEND_FILE_MAX_AGE_DEFAULT = 0
 
 CLIENT_ID = json.loads(open('client_secrets.json', 'r').read())['web'][
     'client_id']
@@ -28,13 +27,6 @@ Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
-
-"""
-@app.after_request
-def add_header(response):
-    response.cache_control.max_age = 0
-    return response
-"""
 
 
 @app.route('/login')
@@ -80,6 +72,7 @@ def gconnect():
         return response
     
     # Verify that the access token is used for the intended user.
+    login_session["credentials"] = credentials.access_token
     gplus_id = credentials.id_token['sub']
     if result['user_id'] != gplus_id:
         response = make_response(
@@ -91,8 +84,7 @@ def gconnect():
     if result['issued_to'] != CLIENT_ID:
         response = make_response(
             json.dumps("Token's client ID does not match app's."), 401)
-        print
-        "Token's client ID does not match app's."
+        print("Token's client ID does not match app's.")
         response.headers['Content-Type'] = 'application/json'
         return response
     
@@ -166,15 +158,11 @@ def getUserID(email):
 @app.route('/gdisconnect')
 def gdisconnect():
     access_token = login_session['access_token']
-    print
-    'In gdisconnect access token is %s', access_token
-    print
-    'User name is: '
-    print
-    login_session['username']
+    print('In gdisconnect access token is %s', access_token)
+    print('User name is: ')
+    print(login_session['username'])
     if access_token is None:
-        print
-        'Access Token is None'
+        print('Access Token is None')
         response = make_response(json.dumps('Current user not connected.'),
                                  401)
         response.headers['Content-Type'] = 'application/json'
@@ -183,13 +171,12 @@ def gdisconnect():
           login_session['access_token']
     h = httplib2.Http()
     result = h.request(url, 'GET')[0]
-    print
-    'result is '
-    print
-    result
+    print('result is ')
+    print(result)
     if result['status'] == '200':
         del login_session['access_token']
         del login_session['gplus_id']
+        del login_session['credentials']
         del login_session['username']
         del login_session['email']
         del login_session['picture']
@@ -210,8 +197,7 @@ def fbconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
     access_token = request.data
-    print
-    "access token received %s " % access_token
+    print("access token received %s " % access_token)
     
     app_id = json.loads(open('fb_client_secrets.json', 'r').read())[
         'web']['app_id']
@@ -287,8 +273,8 @@ def disconnect():
     if 'provider' in login_session:
         if login_session['provider'] == 'google':
             gdisconnect()
-            if login_session['gplus_id']:
-                del login_session['gplus_id']
+            del login_session['gplus_id']
+            del login_session['credentials']
         if login_session['provider'] == 'facebook':
             fbdisconnect()
             del login_session['facebook_id']
