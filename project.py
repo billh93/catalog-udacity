@@ -1,19 +1,4 @@
 from models import *
-from flask import Flask, render_template, request, redirect,jsonify, url_for, flash
-
-from sqlalchemy import create_engine, asc
-from sqlalchemy.orm import sessionmaker
-
-from flask import session as login_session
-import random, string
-
-from oauth2client.client import flow_from_clientsecrets
-from oauth2client.client import FlowExchangeError
-import httplib2
-import json
-from flask import make_response
-import requests
-
 app = Flask(__name__)
 
 CLIENT_ID = json.loads(open('client_secrets.json', 'r').read())['web'][
@@ -22,6 +7,7 @@ APPLICATION_NAME = "Item Catalog Application"
 
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
+
 
 @app.route('/login')
 def showLogin():
