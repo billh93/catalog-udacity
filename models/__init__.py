@@ -1,10 +1,6 @@
 from flask import Flask, render_template, request, redirect,jsonify, url_for, flash
 from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
-from flask import session as login_session
-import random, string
-from oauth2client.client import flow_from_clientsecrets
-from oauth2client.client import FlowExchangeError
 import httplib2
 import json
 from flask import make_response
@@ -66,7 +62,7 @@ class CategoryItem(Base):
 			'description': self.description,
 			'picture': self.picture,
 			'id': self.id,
-			'catalog': self.catalog,
+			'category': self.category,
 		}
 
 

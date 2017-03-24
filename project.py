@@ -1,4 +1,7 @@
 from models import *
+# ------------------------------------------------------------------
+#                       App Configuration
+# ------------------------------------------------------------------
 app = Flask(__name__)
 
 CLIENT_ID = json.loads(open('client_secrets.json', 'r').read())['web'][
@@ -8,6 +11,33 @@ APPLICATION_NAME = "Item Catalog Application"
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
+
+def createUser(login_session):
+    newUser = User(name=login_session['username'],
+                   email=login_session['email'],
+                   picture=login_session['picture'])
+    session.add(newUser)
+    session.commit()
+    user = session.query(User).filter_by(email=login_session['email']).one()
+    return user.id
+
+
+def getUserInfo(user_id):
+    user = session.query(User).filter_by(id=user_id).all()
+    return user
+
+
+def getUserID(email):
+    try:
+        user = session.query(User).filter_by(email=email).one()
+        return user.id
+    except:
+        return None
+
+
+# ------------------------------------------------------------------
+#                             Routes
+# ------------------------------------------------------------------
 
 @app.route('/login')
 def showLogin():
@@ -109,29 +139,6 @@ def gconnect():
     output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
     flash("you are now logged in as %s" % login_session['username'])
     return output
-
-
-def createUser(login_session):
-    newUser = User(name=login_session['username'],
-                   email=login_session['email'],
-                   picture=login_session['picture'])
-    session.add(newUser)
-    session.commit()
-    user = session.query(User).filter_by(email=login_session['email']).one()
-    return user.id
-
-
-def getUserInfo(user_id):
-    user = session.query(User).filter_by(id=user_id).all()
-    return user
-
-
-def getUserID(email):
-    try:
-        user = session.query(User).filter_by(email=email).one()
-        return user.id
-    except:
-        return None
 
 
 # DISCONNECT - Revoke a current user's token and reset their login_session
@@ -248,8 +255,8 @@ def fbdisconnect():
 
 
 # Disconnect based on provider
-@app.route('/disconnect')
-def disconnect():
+@app.route('/logout')
+def logout():
     if 'provider' in login_session:
         if login_session['provider'] == 'google':
             gdisconnect()
@@ -276,13 +283,13 @@ def categoryItemsJSON(category_id):
     category = session.query(Category).filter_by(id=category_id).one()
     items = session.query(CategoryItem).filter_by(
         category_id=category_id).all()
-    return jsonify(CatagoryItems=[i.serialize for i in items])
+    return jsonify(CategoryItems=[i.serialize for i in items])
 
 
 # JSON API to view category item
 @app.route('/category/<int:category_id>/item/<int:item_id>/JSON')
 def categoryItemJSON(category_id, item_id):
-    item = session.query(CategoryItem).filter_by(id=category_id).one()
+    item = session.query(CategoryItem).filter_by(id=item_id).one()
     return jsonify(Category_Item=item.serialize)
 
 
@@ -301,61 +308,6 @@ def showCategories():
     return render_template('home.html', categories=categories)
 
 
-# Create a new category
-@app.route('/category/new', methods=['GET', 'POST'])
-def newCategory():
-    if 'username' not in login_session:
-        return redirect('/login')
-    if request.method == 'POST':
-        newCategory = Category(name=request.form['name'],
-                               user_id=login_session['user_id'])
-        session.add(newCategory)
-        flash('New Category %s Successfully Created' % newCategory.name)
-        session.commit()
-        return redirect(url_for('showCategories'))
-    else:
-        return render_template('newCategory.html')
-
-
-# Edit category
-@app.route('/category/<int:category_id>/edit/', methods=['GET', 'POST'])
-def editCategory(category_id):
-    if 'username' not in login_session:
-        return redirect('/login')
-    editedCategory = session.query(Category).filter_by(id=category_id).one()
-    if login_session['user_id'] == editedCategory.user_id:
-        if request.method == 'POST':
-            if request.form['name']:
-                editedCategory.name = request.form['name']
-                flash('Category Successfully Edited %s' % editedCategory.name)
-                return redirect(url_for('showCategories'))
-        else:
-            return render_template('editCategory.html',
-                                   category_id=category_id,
-                                   category=editedCategory)
-    else:
-        return redirect(url_for('showCategories'))
-
-
-# Delete category
-@app.route('/category/<int:category_id>/delete/', methods=['GET', 'POST'])
-def deleteCategory(category_id):
-    if 'username' not in login_session:
-        return redirect('/login')
-    categoryToDelete = session.query(Category).filter_by(id=category_id).one()
-    if login_session['user_id'] == categoryToDelete.user_id:
-        if request.method == 'POST':
-            session.delete(categoryToDelete)
-            flash('%s Successfully Deleted' % categoryToDelete.name)
-            session.commit()
-            return redirect(url_for('showCategories', category_id=category_id))
-        else:
-            return render_template('deleteCategory.html',
-                                   category=categoryToDelete)
-    else:
-        return redirect(url_for('showCategories'))
-
-
 # Show Catalog Items
 @app.route('/category/<int:category_id>/')
 @app.route('/category/<int:category_id>/items/')
@@ -363,7 +315,11 @@ def showItems(category_id):
     category = session.query(Category).filter_by(id=category_id).one()
     items = session.query(CategoryItem).filter_by(
         category_id=category_id).all()
-    return render_template('items.html', items=items, category=category)
+    try:
+        user = login_session['username']
+    except KeyError:
+        user = None
+    return render_template('items.html', items=items, category=category, user=user)
 
 
 # New Catalog Item
