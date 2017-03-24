@@ -1,9 +1,8 @@
+from models import *
 from flask import Flask, render_template, request, redirect,jsonify, url_for, flash
-app = Flask(__name__)
 
 from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
-from database_schema import Base, Category, CategoryItem, User
 
 from flask import session as login_session
 import random, string
@@ -21,13 +20,8 @@ CLIENT_ID = json.loads(open('client_secrets.json', 'r').read())['web'][
     'client_id']
 APPLICATION_NAME = "Item Catalog Application"
 
-# Connect to Database and create database session
-engine = create_engine('sqlite:///catalog.db')
-Base.metadata.bind = engine
-
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
-
 
 @app.route('/login')
 def showLogin():
