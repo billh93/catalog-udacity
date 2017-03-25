@@ -1,4 +1,6 @@
 from models import *
+from db_connect import *
+
 # ------------------------------------------------------------------
 #                       App Configuration
 # ------------------------------------------------------------------
@@ -8,9 +10,7 @@ CLIENT_ID = json.loads(open('client_secrets.json', 'r').read())['web'][
     'client_id']
 APPLICATION_NAME = "Item Catalog Application"
 
-DBSession = sessionmaker(bind=engine)
-session = DBSession()
-
+session = connect_to_database()
 
 # ------------------------------------------------------------------
 #                             Routes
@@ -324,22 +324,19 @@ def newItem(category_id):
     if 'username' not in login_session:
         return redirect('/login')
     category = session.query(Category).filter_by(id=category_id).one()
-    if login_session['user_id'] == category.user_id:
-        if request.method == 'POST':
-            newItem = CategoryItem(name=request.form['name'],
-                                   description=request.form['description'],
-                                   # picture=request.form['picture'],
-                                   category=request.form['category'],
-                                   category_id=category_id,
-                                   user_id=category.user_id)
-            session.add(newItem)
-            session.commit()
-            flash('New %s Item Successfully Created' % (newItem.name))
-            return redirect(url_for('showItems', category_id=category_id))
-        else:
-            return render_template('newItem.html', category_id=category_id)
-    else:
+    if request.method == 'POST':
+        newItem = CategoryItem(name=request.form['name'],
+                               description=request.form['description'],
+                               # picture=request.form['picture'],
+                               category=request.form['category'],
+                               category_id=category_id,
+                               user_id=login_session['user_id'])
+        session.add(newItem)
+        session.commit()
+        flash('New %s Item Successfully Created' % (newItem.name))
         return redirect(url_for('showItems', category_id=category_id))
+    else:
+        return render_template('newItem.html', category_id=category_id)
 
 
 # Edit Catalog Item
@@ -350,7 +347,7 @@ def editItem(category_id, item_id):
         return redirect('/login')
     editedItem = session.query(CategoryItem).filter_by(id=item_id).one()
     category = session.query(Category).filter_by(id=category_id).one()
-    if login_session['user_id'] == category.user_id:
+    if login_session['user_id'] == editedItem.user_id:
         if request.method == 'POST':
             if request.form['name']:
                 editedItem.name = request.form['name']
@@ -368,6 +365,7 @@ def editItem(category_id, item_id):
             return render_template('editItem.html', category_id=category_id,
                                    item_id=item_id, item=editedItem)
     else:
+        flash('You are not the owner of the item.')
         return redirect(url_for('showItems', category_id=category_id))
 
 
@@ -379,7 +377,7 @@ def deleteItem(category_id, item_id):
         return redirect('/login')
     category = session.query(Category).filter_by(id=category_id).one()
     itemToDelete = session.query(CategoryItem).filter_by(id=item_id).one()
-    if login_session['user_id'] == category.user_id:
+    if login_session['user_id'] == itemToDelete.user_id:
         if request.method == 'POST':
             session.delete(itemToDelete)
             session.commit()
@@ -388,6 +386,7 @@ def deleteItem(category_id, item_id):
         else:
             return render_template('deleteItem.html', item=itemToDelete)
     else:
+        flash('You are not the owner of the item.')
         return redirect(url_for('showItems', category_id=category_id))
 
 

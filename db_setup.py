@@ -1,12 +1,11 @@
 from models import *
 from sqlalchemy import func
-
-DBSession = sessionmaker(bind=engine)
-session = DBSession()
+from db_connect import *
 
 
 def populate_database():
     """Populate the item catalog database some initial content."""
+    session = connect_to_database()
     
     # Make sure the database is empty before running this inital data dump.
     category_count = session.query(func.count(Category.id)).scalar()

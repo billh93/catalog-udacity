@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect,jsonify, url_for, flash
-from sqlalchemy import create_engine, asc
+from sqlalchemy import create_engine, asc, func
 from sqlalchemy.orm import sessionmaker
 
 from oauth2client.client import flow_from_clientsecrets
@@ -16,7 +16,7 @@ from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
-
+from db_connect import *
 
 Base = declarative_base()
 
