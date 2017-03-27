@@ -1,60 +1,129 @@
-# OAuth2.0
-Starter Code for Auth&amp;Auth course
-# Installing the Vagrant VM for ud330 - Authentication & Authorization
+# Project 3: Item Catalog
 
-**Note: If you already have a vagrant machine installed from previous Udacity courses skip to the 'Fetch the Source Code and VM Configuration' section**
+## What it is and does
+Runs a video game based site that stores details of
+video games in the 4 consoles of the game industry. The user can
+login via Google or Facebook in order to add their own video games.
 
-In Lessons 2,3 and 4 of this course, you'll use a virtual machine (VM) to run a web server and a web app that uses it. The VM is a Linux system that runs on top of your own machine.  You can share files easily between your computer and the VM.
+## Required Libraries and Dependencies
+The project code requires the following software:
 
-We're using the Vagrant software to configure and manage the VM. Here are the tools you'll need to install to get it running:
-
-### Git
-
-If you don't already have Git installed, [download Git from git-scm.com.](http://git-scm.com/downloads) Install the version for your operating system.
-
-On Windows, Git will provide you with a Unix-style terminal and shell (Git Bash).  
-(On Mac or Linux systems you can use the regular terminal program.)
-
-You will need Git to install the configuration for the VM. If you'd like to learn more about Git, [take a look at our course about Git and Github](http://www.udacity.com/course/ud775).
-
-### VirtualBox
-
-VirtualBox is the software that actually runs the VM. [You can download it from virtualbox.org, here.](https://www.virtualbox.org/wiki/Downloads)  Install the *platform package* for your operating system.  You do not need the extension pack or the SDK. You do not need to launch VirtualBox after installing it.
-
-**Ubuntu 14.04 Note:** If you are running Ubuntu 14.04, install VirtualBox using the Ubuntu Software Center, not the virtualbox.org web site. Due to a [reported bug](http://ubuntuforums.org/showthread.php?t=2227131), installing VirtualBox from the site may uninstall other software you need.
-
-### Vagrant
-
-Vagrant is the software that configures the VM and lets you share files between your host computer and the VM's filesystem.  [You can download it from vagrantup.com.](https://www.vagrantup.com/downloads) Install the version for your operating system.
-
-**Windows Note:** The Installer may ask you to grant network permissions to Vagrant or make a firewall exception. Be sure to allow this.
-
-## Fetch the Source Code and VM Configuration
-
-**Windows:** Use the Git Bash program (installed with Git) to get a Unix-style terminal.  
-**Other systems:** Use your favorite terminal program.
-
-From the terminal, run:
-
-    git clone https://github.com/udacity/OAuth2.0 oauth
-
-This will give you a directory named **oauth** complete with the source code for the flask application, a vagrantfile, and a bootstrap.sh file for installing all of the necessary tools. 
-
-## Run the virtual machine!
-
-Using the terminal, change directory to oauth (**cd oauth**), then type **vagrant up** to launch your virtual machine.
+* Python 2.7.x
+* [SQLAlchemy](http://www.sqlalchemy.org/) 0.8.4 or higher (a Python SQL toolkit)
+* [Flask](http://flask.pocoo.org/) 0.10.1 or higher (a web development microframework)
+* The following Python packages:
+    * oauth2client
+    * requests
+    * httplib2
 
 
-## Running the Restaurant Menu App
-Once it is up and running, type **vagrant ssh**. This will log your terminal into the virtual machine, and you'll get a Linux shell prompt. When you want to log out, type **exit** at the shell prompt.  To turn the virtual machine off (without deleting anything), type **vagrant halt**. If you do this, you'll need to run **vagrant up** again before you can log into it.
+You can run the project in a Vagrant managed virtual machine (VM) which includes all the
+required dependencies (see below for how to run the VM). For this you will need
+[Vagrant](https://www.vagrantup.com/downloads) and
+[VirtualBox](https://www.virtualbox.org/wiki/Downloads) software installed on your
+system.
+
+## Project contents
+This project consists the following files and directories:
+
+* `project.py` - The main Python script that serves the website. If no database
+    is found, one is created and populated by `db_setup.py`.
+* `fb_client_secrets.json` - Client secrets for Facebook OAuth login.
+* `g_client_secrets.json` - Client secrets for Google OAuth login.
+* `README.md` - This read me file.
+* `/static` - Directory containing CSS and Javascript for the website.
+* `/templates` - Directory containing the HTML templates for the website, using
+    the [Jinja 2](http://jinja.pocoo.org/docs/dev/) templating language for Python.
+    See next section for more details on contents.
+* `db_connect.py` - Function for connecting to the database.
+* `db_setup.py` - Defines the database classes and creates an empty database.
+* `/models` - Directory containing modules that are being used and the database schema.
+
+### Templates
+The `/templates` directory contains the following files, written in HTML and the Jinja2
+templating language:
+
+* `flash_msg.html` - Renders the flash message when a user adds, edits
+    or deletes a video game and when user signs in or out.
+* `deleteItem.html` - Delete video game confirmation page.
+* `editItem.html` - Form to edit the details of a video game.
+* `home.html` - The default page, which lists the 4 game consoles.
+* `items.html` - A page that lists the games belonging to a single console.
+* `base.html` - This defines the common layout of the website and is the parent
+    for all the other template pages.
+* `login.html` - A login page featuring OAuth Goolge+ and Facebook login buttons.
+* `newItem.html` - A form for creating a new video game.
+
+## How to Run the Project
+Download the project zip file to you computer and unzip the file. Or clone this
+repository to your desktop.
+
+Open the text-based interface for your operating system (e.g. the terminal
+window in Linux, the command prompt in Windows).
+
+Navigate to the project directory and then enter the `vagrant` directory.
+
+### Bringing the VM up
+Bring up the VM with the following command:
+
+```bash
+vagrant up
+```
+
+The first time you run this command it will take awhile, as the VM image needs to
+be downloaded.
+
+You can then log into the VM with the following command:
+
+```bash
+vagrant ssh
+```
+
+More detailed instructions for installing the Vagrant VM can be found
+[here](https://www.udacity.com/wiki/ud197/install-vagrant).
+
+### Make sure you're in the right place
+Once inside the VM, navigate to the tournament directory with this command:
+
+```bash
+cd /vagrant/catalog
+```
+
+### OAuth setup
+In order to log in to the web app, you will need to get either a Google+ or Facebook
+(or both) OAuth app ID and secret. For Google, go to the
+[Google Developers Console](https://console.developers.google.com/) and for Facebook,
+go to [Facebook Login](https://developers.facebook.com/products/login).
+
+Once you have your credentials, put the IDs and secrets in the `fb_client_secrets.json`
+file for Facebook and `g_client_secrets.json` for Google.
+
+You will now be able to log in to the app.
+
+### Run project.py
+On the first run of `project.py` there will be no database present, so it creates
+one and populates it with sample data. On the command line do:
+
+```bash
+python project.py
+```
+
+It then starts a web server that serves the application. To view the application,
+go to the following address using a browser on the host system:
+
+```
+http://localhost:5000/
+```
+
+You should see the 4 video game consoles that were added to the database. Go ahead and
+explore the web site. To add a game, you'll need to log in first with either a
+Google or Facebook account.
 
 
-Now that you have Vagrant up and running type **vagrant ssh** to log into your VM.  change to the /vagrant directory by typing **cd /vagrant**. This will take you to the shared folder between your virtual machine and host machine.
+### Shutting the VM down
+When you are finished with the VM, press `Ctrl-D` to logout of it and shut it down
+with this command:
 
-Type **ls** to ensure that you are inside the directory that contains project.py, database_setup.py, and two directories named 'templates' and 'static'
-
-Now type **python database_setup.py** to initialize the database.
-
-Type **python lotsofmenus.py** to populate the database with restaurants and menu items. (Optional)
-
-Type **python project.py** to run the Flask web server. In your browser visit **http://localhost:5000** to view the restaurant menu app.  You should be able to view, add, edit, and delete menu items and restaurants.
+```bash
+vagrant halt
+```
