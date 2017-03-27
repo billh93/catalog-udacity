@@ -1,31 +1,18 @@
 {% extends "base.html" %}
 {% block content %}
     <h1>Showing Games</h1>
-
-    <div class = 'flash'>
-        {% with messages = get_flashed_messages() %}
-          {% if messages %}
-
-            <ul>
-            {% for message in messages %}
-                <li> <strong> {{ message }} </strong> </li>
-            {% endfor %}
-            </ul>
-            {% endif %}
-        {% endwith %}
-    </div>
-	<div class="row padding-top padding-bottom">
-		<div class="col-md-1"></div>
-		<div class="col-md-11 padding-none">
-			<a href="{{url_for('newItem', category_id = category.id )}}">
-				<button class="btn btn-default" id="new-menu-item">
-					<span class="glyphicon glyphicon-sunglasses" aria-hidden="true"></span> Add Item
-				</button>
-			</a>
+	{% include "flash_msg.html" %}
+	{% if 'username' in session %}
+		<div class="row padding-top padding-bottom">
+			<div class="col-md-11 padding-none">
+				<a href="{{url_for('newItem', category_id = category.id )}}">
+					<button class="btn btn-default" id="new-menu-item">
+						<span class="glyphicon glyphicon-sunglasses" aria-hidden="true"></span> Add Item
+					</button>
+				</a>
+			</div>
 		</div>
-		<div class="col-md-7"></div>
-	</div>
-
+	{% endif %}
 	{% if items !=[] %}
 		<div class="row">
 			<div class="col-md-3">
