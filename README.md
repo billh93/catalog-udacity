@@ -36,8 +36,8 @@ This project consists the following files and directories:
     the [Jinja 2](http://jinja.pocoo.org/docs/dev/) templating language for Python.
     See next section for more details on contents.
 * `db_connect.py` - Function for connecting to the database.
-* `db_setup.py` - Defines the database classes and creates an empty database.
-* `/models` - Directory containing modules that are being used and the database schema.
+* `db_setup.py` - Creates sample data for the web application.
+* `/models` - Defines the database classes and creates an empty database.
 
 ### Templates
 The `/templates` directory contains the following files, written in HTML and the Jinja2
