@@ -86,7 +86,7 @@ More detailed instructions for installing the Vagrant VM can be found
 Once inside the VM, navigate to the tournament directory with this command:
 
 ```bash
-cd /vagrant/catalog
+cd /vagrant
 ```
 
 ### OAuth setup
@@ -100,16 +100,21 @@ file for Facebook and `g_client_secrets.json` for Google.
 
 You will now be able to log in to the app.
 
+### Run db_setup.py
+This command populates the application with sample data.
+
+```bash
+python db_setup.py
+```
+
 ### Run project.py
-On the first run of `project.py` there will be no database present, so it creates
-one and populates it with sample data. On the command line do:
+After populating you need to run `project.py` to start the web server.
 
 ```bash
 python project.py
 ```
 
-It then starts a web server that serves the application. To view the application,
-go to the following address using a browser on the host system:
+To view the application go to the following address using a browser on the host system:
 
 ```
 http://localhost:5000/
