@@ -12,9 +12,20 @@ APPLICATION_NAME = "Item Catalog Application"
 
 session = connect_to_database()
 
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'username' not in login_session:
+            return redirect('/login')
+        return f(*args, **kwargs)
+    return decorated_function
+
 # ------------------------------------------------------------------
 #                             Routes
 # ------------------------------------------------------------------
+
+
 
 
 @app.route('/login')
@@ -323,9 +334,8 @@ def showItems(category_id):
 
 # New Catalog Item
 @app.route('/category/<int:category_id>/item/new', methods=['GET', 'POST'])
+@login_required
 def newItem(category_id):
-    if 'username' not in login_session:
-        return redirect('/login')
     category = session.query(Category).filter_by(id=category_id).one()
     if request.method == 'POST':
         newItem = CategoryItem(name=request.form['name'],
@@ -336,7 +346,7 @@ def newItem(category_id):
                                user_id=login_session['user_id'])
         session.add(newItem)
         session.commit()
-        flash('New %s Item Successfully Created' % (newItem.name))
+        flash('New %s Video Game Successfully Created' % (newItem.name))
         return redirect(url_for('showItems', category_id=category_id))
     else:
         return render_template('newItem.html', category_id=category_id)
@@ -345,9 +355,8 @@ def newItem(category_id):
 # Edit Catalog Item
 @app.route('/category/<int:category_id>/item/<int:item_id>/edit',
            methods=['GET', 'POST'])
+@login_required
 def editItem(category_id, item_id):
-    if 'username' not in login_session:
-        return redirect('/login')
     editedItem = session.query(CategoryItem).filter_by(id=item_id).one()
     category = session.query(Category).filter_by(id=category_id).one()
     if login_session['user_id'] == editedItem.user_id:
@@ -362,7 +371,7 @@ def editItem(category_id, item_id):
                 editedItem.category = request.form['category']
             session.add(editedItem)
             session.commit()
-            flash('Item Successfully Edited')
+            flash('Video Game Successfully Edited')
             return redirect(url_for('showItems', category_id=category_id))
         else:
             return render_template('editItem.html', category_id=category_id,
@@ -375,16 +384,14 @@ def editItem(category_id, item_id):
 # Delete Catalog Item
 @app.route('/category/<int:category_id>/item/<int:item_id>/delete',
            methods=['GET', 'POST'])
+@login_required
 def deleteItem(category_id, item_id):
-    if 'username' not in login_session:
-        return redirect('/login')
-    category = session.query(Category).filter_by(id=category_id).one()
     itemToDelete = session.query(CategoryItem).filter_by(id=item_id).one()
     if login_session['user_id'] == itemToDelete.user_id:
         if request.method == 'POST':
             session.delete(itemToDelete)
             session.commit()
-            flash('Menu Item Successfully Deleted')
+            flash('Video Game Successfully Deleted')
             return redirect(url_for('showItems', category_id=category_id))
         else:
             return render_template('deleteItem.html', item=itemToDelete)
