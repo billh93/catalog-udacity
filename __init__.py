@@ -1,10 +1,12 @@
 from models import *
-from db_connect import *
-
 # ------------------------------------------------------------------
 #                       App Configuration
 # ------------------------------------------------------------------
 app = Flask(__name__)
+
+import os
+
+path = os.path.dirname(__file__)
 
 CLIENT_ID = json.loads(open(path+'/client_secrets.json', 'r').read())['web'][
     'client_id']
