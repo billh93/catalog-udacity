@@ -6,7 +6,7 @@ from db_connect import *
 # ------------------------------------------------------------------
 app = Flask(__name__)
 
-CLIENT_ID = json.loads(open('client_secrets.json', 'r').read())['web'][
+CLIENT_ID = json.loads(open(path+'/client_secrets.json', 'r').read())['web'][
     'client_id']
 APPLICATION_NAME = "Item Catalog Application"
 
